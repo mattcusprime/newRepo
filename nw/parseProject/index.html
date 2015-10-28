@@ -1,0 +1,313 @@
+<html>
+<head>
+    <script src="js/jquery-2.1.3.js"></script>
+    <script src="js/papaparse.min.js"></script>
+    <script src="DataTables-1.10.7/media/js/jquery.dataTables.js"></script>
+    <script src="DataTables-1.10.7/extensions/ColVis/js/dataTables.colVis.js"></script>
+    <script src="DataTables-1.10.7/extensions/TableTools/js/dataTables.tableTools.js"></script>
+    <script src="DataTables-1.10.7/extensions/FixedHeader/js/dataTables.fixedHeader.js"></script>
+    <script src="DataTables-1.10.7/extensions/Responsive/js/dataTables.responsive.js"></script>
+    <link href="DataTables-1.10.7/extensions/FixedHeader/css/dataTables.fixedHeader.css" rel="stylesheet" />
+    <link href="DataTables-1.10.7/extensions/Responsive/css/dataTables.responsive.css" rel="stylesheet" />
+    <link href="DataTables-1.10.7/media/css/jquery.dataTables.css" rel="stylesheet" />
+    <link href="DataTables-1.10.7/extensions/TableTools/css/dataTables.tableTools.css" rel="stylesheet" />
+    <link href="DataTables-1.10.7/extensions/ColVis/css/dataTables.colVis.css" rel="stylesheet" />
+    <link href="DataTables-1.10.7/Plugins/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet" />
+    <script src="DataTables-1.10.7/Plugins/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+    <link href="DataTables-1.10.7/Editor-1.5.1/css/editor.dataTables.min.css" rel="stylesheet" />
+    <script src="DataTables-1.10.7/Editor-1.5.1/js/dataTables.editor.min.js"></script>
+    <link href="DataTables-1.10.7/extensions/KeyTable/css/dataTables.keyTable.min.css" rel="stylesheet" />
+    <script src="DataTables-1.10.7/extensions/KeyTable/js/dataTables.keyTable.min.js"></script>
+    <!--DataTables-->
+    <script>
+        var execFile = require('child_process').execFile, child;
+        var fs = require('fs');
+        var strPathToWriteBackTo;
+        $('document').ready(function () {
+
+            $('#removeHightlight').click(function () {
+                //$('tr').removeClass('selected');
+                $('td').each(function () {
+                    var strText = $(this).find('input').val();
+                    var strRegularOleTdText = $(this).text();
+                    if (typeof (strText) != 'undefined') { strRegularOleTdText = strText };
+                    if (strRegularOleTdText == '') {
+                        $(this).addClass('blank');
+                    }
+                    else {
+                        $(this).removeClass('blank');
+                    }
+                    $(this).html('');
+                    $(this).text(strRegularOleTdText);
+                    $(this).parent().removeClass('selected');
+
+                });
+            });
+            //Papa.parse()
+            $("#csvToParse").change(function () {
+                //alert('changed!');
+
+                var file = document.getElementById('csvToParse').files[0];
+                strPathToWriteBackTo = file.path;
+                fs.readFile(file.path, 'utf8', function (err, data) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log(data);
+                    var fileData = data;
+                    var objAllCommands = Papa.parse(data);
+                    $('body *').not('#fileForm,input,#lastFileRan,#returnPath,#min,#max,#removeHightlight,#deleteSelected,#copySelected').remove();
+                    parseDataToTable(objAllCommands, 'commands', file.path);
+                });
+                //parseDataToTable(papaFileToParse);
+            });
+            $('#fileForm').submit(function (event) {
+                event.preventDefault();
+                /*$('#commands_length label select option').each(function () {
+                    if ($(this).val() == -1) {
+                        $(this).prop('selected', true);
+                    }
+                    else {
+                        $(this).prop('selected', false);
+                    };
+                });*/
+                $('table').each(function () {
+                    var table = $(this).DataTable();
+                    table.page.len(-1).draw();
+                });
+                $('#commands_length').change();
+                var arrMainCsvArray = [];
+                $('table tr').each(function () {
+                    var arrLineArray = [];
+                    var numOfCells = $(this).find('td').length;
+                    $(this).find('td').not('td.index,td.blank').each(function (index) {
+
+                        var strCellText = $(this).text();
+                        var strInputText = $(this).find('input').val();
+                        if (typeof (strInputText) != 'undefined') {
+                            strCellText = strInputText;
+                        };
+                        strCellText = $.trim(strCellText);
+                        strCellText = strCellText.replace(/"/g, "");
+                        var numStrCellTextLength = strCellText.length;
+                        arrLineArray.push(strCellText);
+                        /*if (numStrCellTextLength < 1) {
+                            if ($(this).nextAll("td.blank").length) {
+                                if (index == numOfCells) {
+                                    //arrLineArray.push(strCellText + '\r\n');
+                                    arrLineArray.push('\r\n');
+                                }
+                                else {
+                                    //arrLineArray.push(strCellText + ',');
+                                };
+                            }
+                            else {
+                                if (index == numOfCells) {
+                                    arrLineArray.push(strCellText + '\r\n');
+                                }
+                                else {
+                                    arrLineArray.push(",");
+                                    //arrLineArray.push(strCellText + ',');
+                                }
+                            };
+                        }
+                        else {
+                            if (index == numOfCells) {
+                                arrLineArray.push(strCellText + '\r\n');
+                            }
+                            else {
+                                arrLineArray.push(strCellText + ',');
+                            }
+                        }*/
+                    });
+                    if (arrLineArray.length != 0) {
+                        arrMainCsvArray.push(arrLineArray);
+                    };
+                });
+                var objAllTableCommands = Papa.unparse(arrMainCsvArray, {
+                    quotes: false,
+                    delimiter: ",",
+                    skipEmptyLines: true,
+                    newline: "\r\n"
+                });
+                console.log(objAllTableCommands);
+                var strWriteBackPath = '';
+                var returnPathValue = $('#returnPath').val();
+                if (returnPathValue == '') {
+                    strWriteBackPath = strPathToWriteBackTo;
+                }
+                else {
+                    strWriteBackPath = returnPathValue;
+                };
+                fs.writeFile(strWriteBackPath, objAllTableCommands, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    alert(strWriteBackPath + ' was saved!');
+                    //console.log("The file was saved!");
+                });
+            });
+
+            /*$.get('allCommands.csv', function (data) { }).done(function (data) {
+                var objAllCommands = Papa.parse(data);
+                parseDataToTable(objAllCommands);
+
+            });*/
+        });
+        function parseDataToTable(objAllCommands, tableId, filePathParam) {
+            var numLongestArray = 0;
+            var numOfLiteralHeadersTypedInByMe = 2;
+            for (var z = 0; z < objAllCommands.data.length; z++) {
+                var numLengthOfThisArray = objAllCommands.data[z].length;
+                if (numLengthOfThisArray > numLongestArray) {
+                    numLongestArray = numLengthOfThisArray;
+                };
+            }
+            //var objAllCommands = Papa.parse(csvDataToMakeCommandsTable);
+            var strTableString = '<table id="' + tableId + '" class="display compact cell-border"><thead><tr><th>Line Item</th><th>Wait time/Tag</th><th>function call</th>'//<th>Param1</th><th>Param2</th><th>Param3</th><th>Param4</th><th>Param5</th></tr></thead><tbody>'
+            for (var y = numOfLiteralHeadersTypedInByMe; y < numLongestArray; y++) {
+                strTableString += '<th>Param' + (y - numOfLiteralHeadersTypedInByMe) + '</th>';
+            };
+            strTableString += '</tr></thead><tbody>';
+            for (var i = 0; i < objAllCommands.data.length; i++) {
+                var arrThisResult = objAllCommands.data[i];
+
+                strTableString += '<tr>'
+                strTableString += '<td class="index">' + i + '</td>';
+                for (var j = 0; j < numLongestArray; j++) {
+                    if (j >= arrThisResult.length) {
+                        //strTableString += '<td><input type="text"></input> </td>';
+                        strTableString += '<td class="blank"></td>';
+                    } else {
+                        //strTableString += '<td><input type="text" value="' + arrThisResult[j] + '"></input></td>'
+                        strTableString += '<td>' + arrThisResult[j] + '</td>'
+                    };
+
+                }
+                strTableString += '</tr>'
+            };
+            strTableString += '</tbody></table>'
+            $('body').append(strTableString);
+
+            var table = $('#' + tableId).DataTable({
+                'pageLength': 50,
+                'scrollY': '650px',
+                'responsive': true,
+                "lengthMenu": [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                 "columnDefs": [
+                { "type": "num", "targets": 0 }
+                 ],
+                 "order": [[0, "asc"]]
+
+            });
+            $('#min, #max').keyup(function () {
+                table.draw();
+            });
+            $('#' + tableId + ' tr').dblclick(function () {
+                //table.draw();
+
+            });
+
+            $('#' + tableId + ' td').not('#' + tableId + ' td.index').click(function () {
+                var strText = $(this).text();
+                var strHtml = $(this).html();
+                if (strHtml.indexOf('input') == -1) {
+                    $(this).text('');
+                    $(this).html('<input type="text" value="' + strText + '" ></input>');
+                    $(this).focus();
+                };
+                //$('td').not(this).focusout();
+                //$(this).parent().addClass('selected');
+
+            });
+            $('#' + tableId + ' td').not('#' + tableId + ' td.index,#' + tableId + ' td button.copy').focusout(function () {
+                var strText = $(this).find('input').val();
+                var strRegularOleTdText = $(this).text();
+                if (strText == '') {
+                    $(this).addClass('blank');
+                }
+                else {
+                    $(this).removeClass('blank');
+                }
+                $(this).html('');
+                $(this).text(strText);
+                //$(this).parent().removeClass('selected');
+            });
+            $('#' + tableId + ' tbody').on('click', 'tr', function () {
+                if ($(this).hasClass('selected')) {
+                    $(this).removeClass('selected');
+                }
+                else {
+                    table.$('tr.selected').removeClass('selected');
+                    $(this).addClass('selected');
+                }
+            });
+            $('#deleteSelected').click(function () {
+                table.row('.selected').remove().draw(false);
+            });
+            $('#copySelected').click(function () {
+                var newRowNode = table.row('.selected');
+                var cellDataOne = newRowNode.data[0];
+                var newRowNodeData = newRowNode.data();
+                //var newRowIndex = table.row('.selected').index();
+                //var numIndexToRunFrom = newRowNode[0];
+                //newRowNode[0] = Number(newRowNode[0]);
+                //var numIndexToRunFrom = newRowNode[0];
+                
+                
+                table.rows().iterator('row', function (context, index) {
+                    var thisRow = table.row(index);
+                    if (index >= cellDataOne) {
+                        thisRow.data[0] = index + 1;
+                    };
+
+                });
+                var evenNewerRowNode = table.row.add(newRowNodeData);
+                $('tr').removeClass('selected');
+                table.draw();
+                
+                //evenNewerRowNode.data[0] = Number(evenNewerRowNode.data[0] + 1);
+                //.draw().node();
+                //$(evenNewerRowNode).css('color', 'red').animate({ color: 'black' });
+                
+            });
+            if (typeof (filePathParam) != 'undefined') {
+                $('#lastFileRan').text(filePathParam);
+                $('#' + tableId).attr('filePath', filePathParam);
+            };
+           
+
+        }
+
+        $.fn.dataTable.ext.search.push(function (settings, data, dataIndex) {
+            var min = parseInt($('#min').val(), 10);
+            var max = parseInt($('#max').val(), 10);
+            var index = parseFloat(data[0]) || 0; // use data for the index column
+
+            if ((isNaN(min) && isNaN(max)) || (isNaN(min) && index <= max) || (min <= index && isNaN(max)) || (min <= index && index <= max)) {
+                return true;
+            }
+            return false;
+        }
+ );
+
+
+    </script>
+</head>
+<body>
+    <form id="fileForm">
+        <input type="file" id="csvToParse" /><input type="submit" id="returnEdits" value="Send edits back to file" />
+        </br><input id="returnPath" type="text" placeholder="path to write to" value="" />
+        <h2 id="lastFileRan"></h2>
+        <input type="text" id="min" name="min" placeholder="minimum index">
+        <input type="text" id="max" name="max" placeholder="maximum index">
+        
+</form>
+    <button id="removeHightlight">Remove highlights/Cell Edits</button>
+    <button id="deleteSelected">Delete Selected Rows</button>
+    <button id="copySelected">Copy Selected Rows</button>
+</body> 
+</html>
+<script>
+
+</script>

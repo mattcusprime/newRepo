@@ -1,0 +1,1 @@
+{"Uid":"04913e12c84880","ReadOnly":false,"DataLength":59,"CanMakeReadOnly":true,"Formatted":true,"Records":[{"MimeType":"x/nfctl-s","PayloadHex":"00","PayloadASCII":null,"RecordType":"MimeType"},{"Package":"com.jwsoft.nfcactionlauncher","RecordType":"AAR"}],"TagTech":"NTAG213","MaxDataLength":142,"Exception":null}

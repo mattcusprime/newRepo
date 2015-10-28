@@ -1,0 +1,57 @@
+<html>
+<head>
+<script src="js/jquery-2.1.3.js"></script>
+<script>
+var objNfcDataResponse = {};
+var execFile = require('child_process').execFile, child;
+var browserFilePath = '/Program Files (x86)/Google/Chrome/Application/chrome.exe';
+var fs = require('fs');
+var spawn = require('child_process').spawn;
+var out = fs.openSync('./out.log', 'a');
+var err = fs.openSync('./out.log', 'a');
+$('document').ready(function(){
+	
+	$.get( "result.json", function( data ) {
+  
+  
+	}).done(function(data){
+		objNfcDataResponse = JSON.parse(data);
+		console.log(objNfcDataResponse);
+		
+		if(objNfcDataResponse.Uid = '04e63f12c84880'){
+			//browserFilePath = browserFilePath + ' http://google.com';
+			openWebPage('http://www.youtube.com/embed/9yu_g5x3ZoQ?autoplay=1');
+		};
+	
+	
+	});
+	
+	
+});
+
+function openWebPage(urlToPage){
+			 urlToPage = ' ' + urlToPage;
+			 child = execFile(browserFilePath, [urlToPage],
+				   function(error,stdout,stderr) { 
+				if (error) {
+				  console.log(error.stack); 
+				  console.log('Error code: '+ error.code); 
+				  console.log('Signal received: '+ 
+						 error.signal);
+				  } 
+				console.log('Child Process stdout: '+ stdout);
+				console.log('Child Process stderr: '+ stderr);
+			  }); 
+			  child.on('exit', function (code) { 
+				
+				console.log('Child process exited '+
+					'with exit code '+ code);
+			  });
+			  
+};
+</script>
+</head>
+<body>
+
+</body>
+</html>
