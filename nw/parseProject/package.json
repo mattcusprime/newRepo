@@ -1,9 +1,9 @@
 {
-  "name": "NFC analyzer",
+  "name": "Text file parse and write project",
   "version": "0.1",
   "main": "index.html",
   "window": {
-    "title": "NFC analyzer",
+    "title": "textParser",
 	"toolbar": true,
     "min_width": 400,
     "min_height": 200,
