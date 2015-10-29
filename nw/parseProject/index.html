@@ -275,6 +275,7 @@
             });
             $('#deleteSelected').click(function () {
                 table.row('.selected').remove().draw(false);
+                redrawIndexes(table);
             });
             $('#copySelected').click(function () {
                 var newRowNode = table.row('.selected');
@@ -285,17 +286,7 @@
                 $(objRowNode).find('td').first().addClass('index');
                 var numRowIndex = evenNewerRowNode.index();
                 table.draw();
-                
-                var numMyCounter = 0;
-                table.rows().every(function (rowIdx, tableLoop, rowLoop) {
-                    var objMyNewdata = this.data();
-                    objMyNewdata[0] = numMyCounter;
-                    this.data(objMyNewdata);
-                    this.invalidate();
-                    numMyCounter++;
-                    // ... do something with data(), or this.node(), etc
-                });
-                table.draw();
+                redrawIndexes(table);
                 //$('#' + tableId + ' tbody tr').eq(numRowIndex).find('td:eq(0)').addClass('index');
                 $('tr').removeClass('selected');
                 
@@ -324,6 +315,18 @@
             return false;
         }
  );
+        function redrawIndexes(tableToRedrawFor) {
+            var numMyCounter = 0;
+            tableToRedrawFor.rows().every(function (rowIdx, tableLoop, rowLoop) {
+                var objMyNewdata = this.data();
+                objMyNewdata[0] = numMyCounter;
+                this.data(objMyNewdata);
+                this.invalidate();
+                numMyCounter++;
+                // ... do something with data(), or this.node(), etc
+            });
+            tableToRedrawFor.draw();
+        };
         function turnTableIntoArrayData(strTableId) {
             $('#' + strTableId).each(function () {
                 var table = $(this).DataTable();
