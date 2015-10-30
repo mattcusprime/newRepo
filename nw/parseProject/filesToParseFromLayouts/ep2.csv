@@ -1,0 +1,49 @@
+Episode Two,Key,Value,Order 
+Mal1,"Mallurian: Sen... I thought you were going to stop reading? I'm trying to sleep.",1
+Sen1,"Sen: I did, like 2 hours ago...",2
+Mal2,"Mallurian: Then turn off the candelabra already.",3
+Sen2,"Sen: The candelabra?? What? Wait, I'm glowing... Not again...",4
+Mal3,"Mallurian: What? Snowing? That's not what I'm saying. Just please don't leave the candelabra burning again.",5
+Sen3,"Sen: Right, hahaha. I'm gonna step outside and get some air. Sorry, honey, about the lamp. Definitely NOT sorry for a mystical glow that signifies the presence of potent latent magical powers. Forgive me... for the candelabra.",6
+Mal4,"Mallurian: Woof, man, third time now. Yes, clearly nothing is going on but the candelabra. Please put it out.",7
+Sen4,"Sen: Right right, out with you.. Er.. labra thing!",8
+Sen5,"Sen: I can't keep hiding this from him... he's going to figure out.",9
+Mal5,"Mallurian: zzzz MEAT SANDWICH zzzz",10
+Sen6,"Sen: Well..even if he DOESN'T figure it out, I need to talk to him. I need to get some answers. Need to go see Sage Ralph at the church.",11
+Mal6,"Mallurian: Wait...we don't even have a candelabra. I don't even think I've ever seen a candelabra.",12
+Mal7,"Mallurian: Hmm...Better sleep on this.",13
+Sen7,"Sen: I guess I should talk to him... so nervous.",14
+Sen8,"Sen: Sage Ralph, may I trouble your mind? There's something that's been really bothering me. I think I'm finally ready to talk about it...",15
+Ralph1,"Sage Ralph: Yes my dear Sen. I believe I have foreseen this. You have come to speak to me about your new... abilities. You wish to hear the great tale of the past. The legend of magic.",16
+Sen9,"Sen: Actually I wanted to ask... what's the deal with 'Ralph'? It's not really a very Sage-y name. Why not Merlin or Gandalf or Wizrobingston?",17
+Ralph2,"Sage Ralph: Well, Sen, my parents chose my name, ok? I chose to be a sage. Hence, Sage Ralph.  It's not alchemy, Sen; parents name children.",18
+Ralph3,"Sage Ralph: I bet you think I'm going to say 'no I'm not telling it now'. But, nope, in my old age I have forsaken the shackles of shame. And so it begins...",19
+Man11,"Soldier 1:You agreed you'd be the one to do it. I was all for coming along and getting you to this point, but I have no interest in going up to that thing. I mean dragon statues AND pulsing red BLOOD ORBS?",20
+Man21,"Soldier 2: I know what I said and it's not a matter of fear. Arcane matters require some element of prudence, you know?  I mean, no one really knows how magic came to exist.  Tinkering with it isn't like smithing a blade, you oaf.",21
+Man31,"Soldier 3:All I know is that he's right.. you said you're doing it... I'm not going to talk to that... thing again.",22
+Man22,"Soldier 2:Again? You never really proved... never mind. I'm going already.",23
+Man32,"Soldier 3: Good. And I did too talk to it, before, and it was super brave.  I would show you right now, but I'm still pretty tired from how brave I was...",24
+gbg1,"Dark Hood:Hi!",25
+Man23,"Soldier 2:Well, that was, unexpected.",26
+gbg2,"Dark Hood:: You didn't think I'd say hello? You think I'm so rude? Was it the lightning? Not all lightning users are rude, you know.",27
+Man24,"Soldier 2:No no, never mind. I heard that you could make us more powerful... than the others. Make us the greatest mages in the world.",28
+gbg3,"Dark Hood: Yes... you realize how open ended that promise is right? I mean, I'm obviously going to just drain the power from everyone else to accomplish that.",29
+Man25,"Soldier 2:What??! No, you wouldn't dare.",30
+gbg4,"Dark Hood: Hahahaha. How cute.  I can feel your lie, your false outrage; it warms me.  You did know and you don't even care. I can't tell if I like that more or less.  You have the artifact?",31
+Man26,"Soldier 2: Yes. But wait...",32
+gbg5,"Dark Hood: No... no more waiting. Destiny is a matter of choice, not a thing to be waited for, and you already took the fork. Now it's time to eat.",33
+Ralph4,"Sage Ralph:  So you see child, they preferred to release an unspeakable evil upon the world; one which drained it of its wonder, just so they could have something they could control and lord over others.",34
+Sen10,"Sen:Ralph... I mean, Sage Ralph. I'm sorry, I'm stressed of late. Please tell me about the legend of magic, seriously.",35
+Ralph5,"Sage Ralph: don't yet know child. I don't yet know.",36
+Sen11,"Sen: I see. But... what's happening now? Why are we changing?",37
+SenSide1,"Sen:said not to take my promiscuous red shoes off the carpet. While I disagree with his shoe assessment, I will honor his request.",38
+SenSide2,"Sen:The church is straight east of here if I follow the road. I could walk around a bit. Not like it will be hard to find anything.",39
+Sen12,"Sen:Glow is gone again. Figures. I guess I could just go back home...ugh. No I can't. Gotta see if he knows anything.",40
+Sen13,"Sen:I can't leave, I have to see what Sage Ralph Knows.SenSide3",41
+SenSide3,"Sen:Better not go there. Need to get to the church.",42
+greenLadyMidTown1,"Lady:Yes, I am still out here at night time.",43
+faceUpHoodedGuy1,"Hooded Guy:You seriously walk up to strangers in hoods and talk to them in the middle of the night? You are either really dumb or really powerful. Wait, you are glowing. The latter just tripled in probability.",44
+greenWarriorDude1,"Doe eyed warrior:Did I ever tell you what I think about night time? Like, night is just dayless day, ya know? Oh, you're married? Never mind then",45
+Sen14,"Sen: Very poignant repetition there. Very sagely.",46
+SenSide4,"Sen: Whoa… Weird. I guess the glow is back. Almost like it knew I needed it again.",47
+Ralph6,"Sage Ralph: I went to sage school you know? They respected me there.",48

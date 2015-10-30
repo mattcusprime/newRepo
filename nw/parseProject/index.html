@@ -35,24 +35,18 @@
         var c2Dictionary = false;
         var c2Array = false;
         $('document').ready(function () {
+            $("document").keyup(function (event) {
+                if (event.which == 192) {
+                    event.preventDefault();
+                    removeAllCellHighlights();
+                }
+
+            });
+
 
             $('#removeHightlight').click(function () {
                 //$('tr').removeClass('selected');
-                $('td').each(function () {
-                    var strText = $(this).find('input').val();
-                    var strRegularOleTdText = $(this).text();
-                    if (typeof (strText) != 'undefined') { strRegularOleTdText = strText };
-                    if (strRegularOleTdText == '') {
-                        $(this).addClass('blank');
-                    }
-                    else {
-                        $(this).removeClass('blank');
-                    }
-                    $(this).html('');
-                    $(this).text(strRegularOleTdText);
-                    $(this).parent().removeClass('selected');
-
-                });
+                removeAllCellHighlights();
             });
             //Papa.parse()
             $("#csvToParse").change(function () {
@@ -100,7 +94,32 @@
 
                         }
                         else if (objDataObject.c2array) {
-
+                            var objDataObject = JSON.parse(data);
+                            var numColumns = objDataObject.size[1] - 1;
+                            var numRows = objDataObject.size[0] - 1;
+                            var arrCreatedCsv = [];
+                            var strHeaderString = '';
+                            for (var i = 0; i <= numColumns - 1; i++) {
+                                strHeaderString += 'Column ' + i + ',';
+                            };
+                            //arrCreatedCsv.push(strHeaderString);
+                            strHeaderString = strHeaderString.substring(0, strHeaderString.length - 1);
+                            strHeaderString += "\r\n";
+                            for (var i = 0; i < numRows; i++) {
+                                var objInnerRow = objDataObject.data[i];
+                                for (var k = 0; k < numColumns; k++) {
+                                    if (objInnerRow[k] != 0 && typeof(objInnerRow[k]) != 'undefined') {
+                                        strHeaderString += objInnerRow[k] + ",";
+                                    }
+                                    else {
+                                        strHeaderString += " ,";
+                                    }
+                                };
+                                strHeaderString = strHeaderString.substring(0, strHeaderString.length - 1);
+                                strHeaderString += "\r\n";
+                            };
+                            var objAllCommands = Papa.parse(strHeaderString, parseOptions);
+                            parseDataToTable(objAllCommands, 'commands', file.path);
 
                         };
 
@@ -239,7 +258,11 @@
                     { orderable: true, className: 'reorder', targets: 0 },
                     { orderable: false, targets: '_all' }
                 ],
-                order: [[0, 'asc']]
+                order: [[0, 'asc']],
+                drawCallback: function (settings) {
+                    addCellEventListenersToTable('commands');
+                    removeAllCellHighlights();
+                }
 
             });
             addCellEventListenersToTable('commands');
@@ -418,6 +441,23 @@
             return arrDataArrayToReturn;
 
         };
+        function removeAllCellHighlights() {
+            $('td').each(function () {
+                var strText = $(this).find('input').val();
+                var strRegularOleTdText = $(this).text();
+                if (typeof (strText) != 'undefined') { strRegularOleTdText = strText };
+                if (strRegularOleTdText == '') {
+                    $(this).addClass('blank');
+                }
+                else {
+                    $(this).removeClass('blank');
+                }
+                $(this).html('');
+                $(this).text(strRegularOleTdText);
+                $(this).parent().removeClass('selected');
+
+            });
+        };
     </script>
 </head>
 <body>
@@ -431,7 +471,7 @@
         <input type="text" id="max" name="max" placeholder="maximum index">
 
     </form>
-    <button id="removeHightlight">Remove highlights/Cell Edits</button>
+    <button id="removeHightlight">Click or press ~ to Remove highlights/Cell Edits</button>
     <button id="deleteSelected">Delete Selected Rows</button>
     <button id="copySelected">Copy Selected Rows</button>
     <button id="insertRowAfterSelected">Insert Row After Selected</button>
