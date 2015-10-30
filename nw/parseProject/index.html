@@ -74,7 +74,7 @@
 
                     var numGetFileExtensionIndex = strPathToWriteBackTo.indexOf('.') + 1;
                     var strFileExtension = strPathToWriteBackTo.substring(numGetFileExtensionIndex, strPathToWriteBackTo.length);
-                    $('body *').not('#fileForm,input,#lastFileRan,#returnPath,#min,#max,#removeHightlight,#deleteSelected,#copySelected,#c2Dictionary,#c2Array,#dictionaryPath').remove();
+                    $('body *').not('#fileForm,input,#lastFileRan,#returnPath,#min,#max,#removeHightlight,#deleteSelected,#copySelected,#c2Dictionary,#c2Array,#dictionaryPath,#insertRowAfterSelected').remove();
                     if (strFileExtension == 'csv') {
                         var objAllCommands = Papa.parse(data, parseOptions);
                         parseDataToTable(objAllCommands, 'commands', file.path);
@@ -249,51 +249,36 @@
             });
             
             
-            /*$('#' + tableId + ' td').not('#' + tableId + ' td.index').click(function () {
-                var strText = $(this).text();
-                var strHtml = $(this).html();
-                if (strHtml.indexOf('input') == -1) {
-                    $(this).text('');
-                    $(this).html('<input type="text" value="' + strText + '" ></input>');
-                    $(this).focus();
-                };
-                //$(this).parent()
-                //$('td').not(this).focusout();
-                //$(this).parent().addClass('selected');
-                if ($(this).parent().hasClass('selected')) {
-                    $(this).parent().removeClass('selected');
-                }
-                else {
-                    $('#' + tableId + ' tr.selected').removeClass('selected');
-                    $(this).parent().addClass('selected');
-                }
-            });
-            $('#' + tableId + ' td').not('#' + tableId + ' td.index,#' + tableId + ' td button.copy').focusout(function () {
-                var strText = $(this).find('input').val();
-                var strRegularOleTdText = $(this).text();
-                if (strText == '') {
-                    $(this).addClass('blank');
-                }
-                else {
-                    $(this).removeClass('blank');
-                }
-                $(this).html('');
-                $(this).text(strText);
-                
-            });*/
-            /*$('#' + tableId + ' tbody').on('click', 'tr', function () {
-                if ($(this).hasClass('selected')) {
-                    $(this).removeClass('selected');
-                }
-                else {
-                    table.$('tr.selected').removeClass('selected');
-                    $(this).addClass('selected');
-                }
-            });*/
             $('#deleteSelected').click(function () {
                 table.row('.selected').remove().draw(false);
                 redrawIndexes(table);
                 addCellEventListenersToTable('commands');
+            });
+            $('#insertRowAfterSelected').click(function () {
+                var newRowNode = table.row('.selected');
+                var newRowHtml = table.row('.selected').node();
+                var cellDataOne = newRowNode.data[0];
+                var newRowNodeData = newRowNode.data();
+                var numRowDataLength = table.row('.selected').data.length;
+                var arrEmptyData = [];
+                for (var i = 0; i < newRowNodeData.length; i++) {
+                    arrEmptyData[i] = ' ';
+                };
+                //var evenNewerRowNode = table.row.add(newRowNodeData);
+                var evenNewerRowNode = table.row.add(arrEmptyData);
+                evenNewerRowNode.node(newRowHtml);// = newRowHtml;
+                var objRowNode = evenNewerRowNode.node();
+                $(objRowNode).find('td').first().addClass('index');
+                var numRowIndex = evenNewerRowNode.index();
+                /*for (var i = 0; i < evenNewerRowNode.data.length; i++) {
+                    evenNewerRowNode.data[i] = ' ';
+                };*/
+                table.draw();
+                redrawIndexes(table);
+                $('tr').removeClass('selected');
+                addCellEventListenersToTable('commands');
+                
+                
             });
             $('#copySelected').click(function () {
                 var newRowNode = table.row('.selected');
@@ -307,13 +292,7 @@
                 var numRowIndex = evenNewerRowNode.index();
                 table.draw();
                 redrawIndexes(table);
-                //$('#' + tableId + ' tbody tr').eq(numRowIndex).find('td:eq(0)').addClass('index');
                 $('tr').removeClass('selected');
-
-
-                //evenNewerRowNode.data[0] = Number(evenNewerRowNode.data[0] + 1);
-                //.draw().node();
-                //$(evenNewerRowNode).css('color', 'red').animate({ color: 'black' });
                 addCellEventListenersToTable('commands');
             });
             if (typeof (filePathParam) != 'undefined') {
@@ -399,8 +378,9 @@
             tableToRedrawFor.draw();
         };
         function turnTableIntoArrayData(strTableId) {
+            var table;
             $('#' + strTableId).each(function () {
-                var table = $(this).DataTable();
+                table = $(this).DataTable();
                 table.page.len(-1).draw();
             });
             $('#' + strTableId + '_length').change();
@@ -434,7 +414,9 @@
                     arrDataArrayToReturn.push(arrLineArray);
                 };
             });
+            table.page.len(50).draw();
             return arrDataArrayToReturn;
+
         };
     </script>
 </head>
@@ -452,6 +434,7 @@
     <button id="removeHightlight">Remove highlights/Cell Edits</button>
     <button id="deleteSelected">Delete Selected Rows</button>
     <button id="copySelected">Copy Selected Rows</button>
+    <button id="insertRowAfterSelected">Insert Row After Selected</button>
     <button id="c2Dictionary">C2 Dictionary (key in column 3, val in 4)</button>
     <input id="dictionaryPath" type="text" placeholder="path to write to for c2Dictionary" value="c2Dictionary.json" />
     <button id="c2Array">Create C2 array</button>
