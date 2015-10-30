@@ -68,7 +68,7 @@
 
                     var numGetFileExtensionIndex = strPathToWriteBackTo.indexOf('.') + 1;
                     var strFileExtension = strPathToWriteBackTo.substring(numGetFileExtensionIndex, strPathToWriteBackTo.length);
-                    $('body *').not('#fileForm,input,#lastFileRan,#returnPath,#min,#max,#removeHightlight,#deleteSelected,#copySelected,#c2Dictionary,#c2Array,#dictionaryPath,#insertRowAfterSelected').remove();
+                    $('body *').not('#fileForm,input,#lastFileRan,#returnPath,#min,#max,#removeHightlight,#deleteSelected,#copySelected,#c2Dictionary,#c2Array,#dictionaryPath,#insertRowAfterSelected,#dontAddLineItem').remove();
                     if (strFileExtension == 'csv') {
                         var objAllCommands = Papa.parse(data, parseOptions);
                         parseDataToTable(objAllCommands, 'commands', file.path);
@@ -166,6 +166,8 @@
                     skipEmptyLines: true,
                     newline: "\r\n"
                 };
+                var dontIncludeLines = false;
+                //dontAddLineItem
                 if ($('#quotesOrNot').prop('checked')) {
                     unparseOptions.quotes = true;
                 }
@@ -207,8 +209,13 @@
                 };
             }*/
             //var objAllCommands = Papa.parse(csvDataToMakeCommandsTable);
-            var strTableString = '<table id="' + tableId + '" class="display compact cell-border"><thead><tr><th>Line Item</th>'//<th>Param1</th><th>Param2</th><th>Param3</th><th>Param4</th><th>Param5</th></tr></thead><tbody>'
-            /*for (var y = numOfLiteralHeadersTypedInByMe; y < numLongestArray; y++) {
+            if ($('#dontAddLineItem').prop('checked')) {
+                var strTableString = '<table id="' + tableId + '" class="display compact cell-border"><thead><tr>'
+            }
+            else {
+                var strTableString = '<table id="' + tableId + '" class="display compact cell-border"><thead><tr><th>Line Item</th>'
+            };
+                /*for (var y = numOfLiteralHeadersTypedInByMe; y < numLongestArray; y++) {
                 strTableString += '<th>Param' + (y - numOfLiteralHeadersTypedInByMe) + '</th>';
             };*/
             for (var y = 0; y < objAllCommands.meta.fields.length; y++) {
@@ -219,7 +226,13 @@
                 //var arrThisResult = objAllCommands.data[i];
                 var objThisResult = objAllCommands.data[i];
                 strTableString += '<tr>'
-                strTableString += '<td class="index">' + i + '</td>';
+                if ($('#dontAddLineItem').prop('checked')) {
+
+                }
+                else {
+                    strTableString += '<td class="index">' + i + '</td>';
+                };
+                
                 /*for (var j = 0; j < numLongestArray; j++) {
                     if (j >= arrThisResult.length) {
                         //strTableString += '<td><input type="text"></input> </td>';
@@ -342,10 +355,22 @@
             $('#' + tableId + ' td').not('#' + tableId + ' td.index').click(function () {
                 var strText = $(this).text();
                 var strHtml = $(this).html();
-                if (strHtml.indexOf('input') == -1) {
-                    $(this).text('');
-                    $(this).html('<input type="text" value="' + strText + '" ></input>');
-                    $(this).focus();
+                if (strHtml.indexOf('textarea') == -1) {
+                    //$(this).text('');
+                    $(this).html('<textarea rows="8" cols="50">' + strText +'</textarea>');
+                    $(this).find('textarea').focus();
+                    $(this).find('textarea').focusout(function () {
+                        var strText2 = $(this).val();
+                        var myParent = $(this).parent();
+                        myParent.html('<td>' + strText2 + '</td>');
+
+                    });
+                    /*$(this).find('textarea').focusout(function () {
+                        var myVal = $(this).text();
+                        $(this).html('');
+                        $(this).html('<td>' + myVal + '</td>');
+                    });*/
+
                 };
                 //$(this).parent()
                 //$('td').not(this).focusout();
@@ -361,19 +386,20 @@
             });
 
 
-            $('#' + tableId + ' td').not('#' + tableId + ' td.index,#' + tableId + ' td button.copy').focusout(function () {
+            /*$('#' + tableId + ' td').not('#' + tableId + ' td.index,#' + tableId + ' td button.copy').focusout(function () {
                 var strText = $(this).find('input').val();
                 var strRegularOleTdText = $(this).text();
+                //if (typeof (strText) != 'undefined') { strText = strRegularOleTdText };
                 if (strText == '') {
                     $(this).addClass('blank');
                 }
                 else {
                     $(this).removeClass('blank');
                 }
-                $(this).html('');
-                $(this).text(strText);
+                $(this).html('<td>' + strText + '</td>');
+                //$(this).text(strText);
 
-            });
+            });*/
             $('#' + tableId + ' tr').click(function () {
                 if ($(this).hasClass('selected')) {
                     $(this).removeClass('selected');
@@ -423,7 +449,7 @@
                 $(this).find('td').not('td.index,td.blank').each(function (index) {
 
                     var strCellText = $(this).text();
-                    var strInputText = $(this).find('input').val();
+                    var strInputText = $(this).find('textarea').val();
                     if (typeof (strInputText) != 'undefined') {
                         strCellText = strInputText;
                     };
@@ -464,6 +490,7 @@
     <form id="fileForm">
         <input type="file" id="csvToParse" /><input type="submit" id="returnEdits" value="Send edits back to file" />
         <input type="checkbox" id="quotesOrNot" name="quotesies" value="quotes" />Enclose values in double quotes?<br>
+        <input type="checkbox" id="dontAddLineItem" name="lineItem" value="lineItem" />Don't add Line item column.<br>
 
         <input id="returnPath" type="text" placeholder="path to write to" value="" />
         <h2 id="lastFileRan"></h2>
